@@ -4,14 +4,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-df_movies = pd.read_parquet("C:/Users/jano_/OneDrive/Escritorio/Proyecto Final Henry/DataSet/Movies.parquet")
+df_movies = pd.read_parquet("DataSet/Movies.parquet")
 df_movies['release_date'] = pd.to_datetime(df_movies['release_date'], unit='ms')
 
-df_cast_movies = pd.read_parquet("C:/Users/jano_/OneDrive/Escritorio/Proyecto Final Henry/DataSet/Relation_Cast_Movies.parquet")
-df_cast = pd.read_parquet("C:/Users/jano_/OneDrive/Escritorio/Proyecto Final Henry/DataSet/Cast_Movies.parquet")
+df_cast_movies = pd.read_parquet("DataSet/Relation_Cast_Movies.parquet")
+df_cast = pd.read_parquet("DataSet/Cast_Movies.parquet")
 
-df_movies_director = pd.read_parquet("C:/Users/jano_/OneDrive/Escritorio/Proyecto Final Henry/DataSet/Relation_Director_Movies.parquet")
-df_directors = pd.read_parquet("C:/Users/jano_/OneDrive/Escritorio/Proyecto Final Henry/DataSet/Director_Movies.parquet")
+df_movies_director = pd.read_parquet("DataSet/Relation_Director_Movies.parquet")
+df_directors = pd.read_parquet("DataSet/Director_Movies.parquet")
 
 
 
@@ -215,7 +215,7 @@ def get_director(nombre_director: str):
 
 
 
-df_to_ML = pd.read_parquet("C:/Users/jano_/OneDrive/Escritorio/Proyecto Final Henry/DataSet/Data-to-ML.parquet")
+df_to_ML = pd.read_parquet("DataSet/Data-to-ML.parquet")
 
 
 tfidf = TfidfVectorizer(stop_words="english")
