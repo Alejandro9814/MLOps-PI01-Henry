@@ -4,16 +4,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-df_movies = pd.read_parquet("DataSet/Movies.parquet")
-df_movies['release_date'] = pd.to_datetime(df_movies['release_date'], unit='ms')
-
-df_cast_movies = pd.read_parquet("DataSet/Relation_Cast_Movies.parquet")
-df_cast = pd.read_parquet("DataSet/Cast_Movies.parquet")
-
-df_movies_director = pd.read_parquet("DataSet/Relation_Director_Movies.parquet")
-df_directors = pd.read_parquet("DataSet/Director_Movies.parquet")
-
-
 
 app = FastAPI()
 
@@ -30,6 +20,9 @@ def cantidad_estrenos_mes(mes: str):
     Returns:
         Mensaje con la cantidad de películas estrenadas en el mes consultado.
     """
+    df_movies = pd.read_parquet('DataSet/Movies.parquet')
+    df_movies['release_date'] = pd.to_datetime(df_movies['release_date'], unit='ms')
+
     meses_dict = {"enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6, 
             "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12}
     
@@ -53,6 +46,9 @@ def cantidad_filmaciones_dia(dia: str):
     Returns:
         Mensaje con la cantidad de películas estrenadas en el día consultado.
     """
+    df_movies = pd.read_parquet('DataSet/Movies.parquet')
+    df_movies['release_date'] = pd.to_datetime(df_movies['release_date'], unit='ms')
+
     dias_semana_dict = {"lunes": 0, "martes": 1, "miércoles": 2, "jueves": 3,"viernes": 4,"sábado": 5, "domingo": 6}
     
     dia_numero = dias_semana_dict.get(dia.lower())
@@ -77,6 +73,8 @@ def score_titulo(titulo_de_la_filmación: str):
         dict: Un diccionario con un mensaje sobre el año de estreno, la popularidad y titulo 
         de la película, o un mensaje de error si no se encuentra.
     """
+    df_movies = pd.read_parquet('DataSet/Movies.parquet')
+
     #Se asigna a una variable un pequeño df de una sola fila según la coincidencia con el título de la película
     pelicula = df_movies[df_movies['title'].str.lower() == titulo_de_la_filmación.lower()] 
     if pelicula.empty:
@@ -106,6 +104,8 @@ def votos_titulo(titulo_film: str):
             - Si la película tiene menos de 2000 votos, indica que no cumple con el requisito.
             - Si el título no se encuentra en la base de datos, devuelve un mensaje de error.
     """
+    df_movies = pd.read_parquet('DataSet/Movies.parquet')
+
     #Se asigna a una variable un pequeño df de una sola fila según la coincidencia con el título de la película
     pelicula = df_movies[df_movies['title'].str.lower() == titulo_film.lower()]
     
@@ -143,6 +143,12 @@ def get_actor(nombre_actor: str):
         Mensaje con las peliculas en las que participó el actor, el retorno que ha conseguido por película y un promedio de retorno,
         o error si no encuentra al actor consultado.
     """
+    df_movies = pd.read_parquet("DataSet/Movies.parquet")
+    df_cast_movies = pd.read_parquet("DataSet/Relation_Cast_Movies.parquet")
+    df_cast = pd.read_parquet("DataSet/Cast_Movies.parquet")
+
+    df_actor_movies = pd.merge(df_cast_movies, df_cast, left_on="idCast", right_on="idCast", how="inner")
+    df_actor_movies = pd.merge(df_actor_movies, df_movies, left_on="idMovies", right_on="idMovies", how="inner")
 
     #Se asigna a una variable un pequeño df con las filas donde aparece el actor buscado.
     actor = df_actor_movies[df_actor_movies['nameCast'].str.lower() == nombre_actor.lower()]
@@ -171,6 +177,9 @@ def get_director(nombre_director: str):
     Returns:
         Mensaje con las peliculas en las que participó el actor, el retorno que ha conseguido por película y un promedio de retorno.
     """
+    df_movies_director = pd.read_parquet("DataSet/Relation_Director_Movies.parquet")
+    df_directors = pd.read_parquet("DataSet/Director_Movies.parquet")
+    df_movies = pd.read_parquet("DataSet/Movies.parquet")
 
     #Se asigna a una variable un pequeño df con las filas donde aparece el director buscado.
     director = df_directors[df_directors['nameCrew'].str.lower() == nombre_director.lower()]
@@ -215,15 +224,6 @@ def get_director(nombre_director: str):
 
 
 
-df_to_ML = pd.read_parquet("DataSet/Data-to-ML.parquet")
-
-
-tfidf = TfidfVectorizer(stop_words="english")
-tfidf_matrix = tfidf.fit_transform(df_to_ML["combined_features"])
-
-cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
-
-
 @app.get("/get_recomendacion")
 def recomendar_peliculas(titulo):
     """
@@ -237,6 +237,13 @@ def recomendar_peliculas(titulo):
     """
     n_recomendaciones= 5
     titulo = titulo.lower()
+
+    df_to_ML = pd.read_parquet("DataSet/Data-to-ML.parquet")
+
+
+    tfidf = TfidfVectorizer(stop_words="english")
+    tfidf_matrix = tfidf.fit_transform(df_to_ML["combined_features"])
+    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
     if titulo not in df_to_ML["title"].str.lower().values:
         return "Título no encontrado en la base de datos."
