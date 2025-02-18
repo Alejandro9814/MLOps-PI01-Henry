@@ -9,6 +9,12 @@ app = FastAPI()
 
 
 
+@app.get("/")
+def read_root():
+    return {"message": "FastAPI funcionando en Render 🚀"}
+
+
+
 @app.get("/cantidad_estrenos_mes")
 def cantidad_estrenos_mes(mes: str):
     """
