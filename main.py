@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import pandas as pd
+import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -240,10 +241,8 @@ def recomendar_peliculas(titulo):
 
     df_to_ML = pd.read_parquet("DataSet/Data-to-ML.parquet")
 
-
-    tfidf = TfidfVectorizer(stop_words="english")
-    tfidf_matrix = tfidf.fit_transform(df_to_ML["combined_features"])
-    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+    with open('cosine_similarity_matrix.pkl', 'rb') as f:
+        cosine_sim = pickle.load(f)
 
     if titulo not in df_to_ML["title"].str.lower().values:
         return "Título no encontrado en la base de datos."
