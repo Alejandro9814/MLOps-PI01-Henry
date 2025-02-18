@@ -125,12 +125,6 @@ def votos_titulo(titulo_film: str):
 
 
 
-#df que contendra un merge para poder relacionar Movies con Cast_Movies
-df_actor_movies = pd.merge(df_cast_movies, df_cast, left_on="idCast", right_on="idCast", how="inner")
-df_actor_movies = pd.merge(df_actor_movies, df_movies, left_on="idMovies", right_on="idMovies", how="inner")
-
-
-
 @app.get("/get_actor")
 def get_actor(nombre_actor: str):
     """
