@@ -241,7 +241,7 @@ def recomendar_peliculas(titulo):
 
     df_to_ML = pd.read_parquet("DataSet/Data-to-ML.parquet")
 
-    with open('cosine_similarity_matrix.pkl', 'rb') as f:
+    with open('DataSet/cosine_similarity_matrix.pkl', 'rb') as f:
         cosine_sim = pickle.load(f)
 
     if titulo not in df_to_ML["title"].str.lower().values:
