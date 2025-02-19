@@ -97,7 +97,7 @@ def score_titulo(titulo_de_la_filmación: str):
 
 
 @app.get("/votos_titulo")
-def votos_titulo(titulo_film: str):
+def votos_titulo(titulo_de_la_filmación: str):
     """
     Obtiene años de estreno, la cantidad de votos y el promedio de valoraciones de una película, sólo si tiene más de 2000 valoraciones.
 
@@ -114,14 +114,14 @@ def votos_titulo(titulo_film: str):
     df_movies = pd.read_parquet('DataSet/Movies.parquet')
 
     #Se asigna a una variable un pequeño df de una sola fila según la coincidencia con el título de la película
-    pelicula = df_movies[df_movies['title'].str.lower() == titulo_film.lower()]
+    pelicula = df_movies[df_movies['title'].str.lower() == titulo_de_la_filmación.lower()]
     
     if pelicula.empty:
         return {"error": "No se encontró ninguna película con ese título."}
     
     votos = pelicula['vote_count'].iloc[0]
     if votos < 2000:
-        return {f"La película '{titulo_film}' no cumple con la condición de tener al menos 2000 valoraciones. Solo tiene {votos} valoraciones."}
+        return {f"La película '{titulo_de_la_filmación}' no cumple con la condición de tener al menos 2000 valoraciones. Solo tiene {votos} valoraciones."}
     
     # Se obtienen los datos contenidos en la fila de la variable película y los asigna a una variable por separado.
     promedio_votos = pelicula['vote_average'].iloc[0]
