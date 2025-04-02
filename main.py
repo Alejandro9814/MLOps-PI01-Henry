@@ -170,13 +170,13 @@ def get_actor(nombre_actor: str):
 @app.get("/get_director")
 def get_director(nombre_director: str):
     """
-    Obtiene las películas, el retorno total de las películas y el promedio.
+    Al ingresar el nombre de un director obtiene las películas que ha dirigido, el retorno individual, ganancia y costo de las mismas.
 
     Args:
-        nombre_actor (str): Nombre actor.
+        nombre_director (str): Nombre director.
 
     Returns:
-        Mensaje con las peliculas en las que participó el actor, el retorno que ha conseguido por película y un promedio de retorno.
+        Mensaje con las peliculas en las que participó el director, el retorno que ha conseguido por película, fecha de lanzamiento, costo y ganacia.
     """
     df_movies_director = pd.read_parquet("DataSet/Relation_Director_Movies.parquet")
     df_directors = pd.read_parquet("DataSet/Director_Movies.parquet")
